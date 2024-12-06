@@ -74,3 +74,23 @@ if __name__ == "__main__":
     X_test, Y_test = preprocess(test_data)
     print(f"X_test Shape: {X_test.shape}")
     print(f"Y_test Shape: {Y_test.shape}")
+    # Plotting the distribution of genres in the training data
+    plt.figure(figsize=(10, 6))
+    sns.countplot(y=train_data['genre'], order=train_data['genre'].value_counts().index)
+    plt.title('Distribution of Genres in Training Data')
+    plt.xlabel('Count')
+    plt.ylabel('Genre')
+    plt.show()
+
+    # Plotting the distribution of genres in the test data
+    plt.figure(figsize=(10, 6))
+    sns.countplot(y=test_data['genre'], order=test_data['genre'].value_counts().index)
+    plt.title('Distribution of Genres in Test Data')
+    plt.xlabel('Count')
+    plt.ylabel('Genre')
+    plt.show()
+   
+    # Reduce dimensions for visualization
+    def plot_tfidf(X_tfidf, labels, title):
+        svd = TruncatedSVD(n_components=2)
+        X_reduced = svd.fit_transform(X_tfidf)
