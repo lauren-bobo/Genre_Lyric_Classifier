@@ -14,7 +14,7 @@ data = load_train_data()
 
 X_train, Y_train, vectorizer = preprocess(data)
 
-# Load models from files
+# Load models from files, we will have to save them with Pickle to use them like this
 dt1 = joblib.load('path_to_decision_tree_model_1.pkl')
 dt2 = joblib.load('path_to_decision_tree_model_2.pkl')
 dt3 = joblib.load('path_to_decision_tree_model_3.pkl')

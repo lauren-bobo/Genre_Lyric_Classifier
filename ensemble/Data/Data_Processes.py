@@ -99,7 +99,9 @@ def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
     plt.xlabel('Average TF-IDF Score')
     plt.ylabel('Terms')
     plt.show()
-# Main Execution
+
+
+# Main Execution to test and create diagrams for the data
 if __name__ == "__main__":
     # Load Data
     print(f"\nLoading Data...")
