@@ -102,12 +102,30 @@ def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
     plt.ylabel('Terms')
     plt.show()
 
+def plot_top_words_per_genre(data, vectorizer):
+    # Create DataFrame from the vectorized features
+    X = vectorizer.transform(data['Lyric'])
+    words = vectorizer.get_feature_names()
+    word_freq = pd.DataFrame(X.toarray(), columns=words)
+
+    # Combine with the genre information
+    genre_word_freq = pd.concat([data['genre'], word_freq], axis=1)
+    genre_word_freq = genre_word_freq.groupby('genre').mean()
+
+    # Create a heatmap of top words by genre
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(genre_word_freq, cmap='magma', annot=True, fmt="g", cbar=True)
+    plt.title('Top 100 Words by Genre')
+    plt.ylabel('Genre')
+    plt.xlabel('Word')
+    plt.show()
 
 # Main Execution to test and create diagrams for the data
 if __name__ == "__main__":
     # Load Data
     print(f"\nLoading Data...")
-    train_data, test_data = load_data()
+    train_data = load_train_data()
+    test_data= load_test_data()
     
     trainDF = pd.DataFrame(train_data)
     testDF = pd.DataFrame(test_data)
@@ -117,6 +135,10 @@ if __name__ == "__main__":
 
     sns.countplot(x='genre', data=testDF)
     plt.show()
+
+    #check for duplicates
+    print(f"Train Data Duplicates: {train_data.duplicated().sum()}")
+    print(f"Test Data Duplicates: {test_data.duplicated().sum()}")
 
     
     # Preprocess Training Data
@@ -148,5 +170,10 @@ if __name__ == "__main__":
 
     # Visualize Top TF-IDF Terms
     print("\nVisualizing Top TF-IDF Terms...")
-    visualize_tfidf(X_train, vectorizerTrain, top_n=100)
+    visualize_tfidf(X_train, vectorizerTrain, top_n=300)
+    print("\nVisualizing Top Words per Genre...")
+    plot_top_words_per_genre(train_data, vectorizerTrain)
+    plot_top_words_per_genre(test_data, vectorizerTest)
+    print("\nData Preprocessing Complete.")
+
    
