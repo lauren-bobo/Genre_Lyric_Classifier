@@ -34,10 +34,11 @@ def load_test_data():
 
 # Preprocessing Pipeline
 def preprocess(data):
+    print(f"Preprocessing Data... Please wait a moment.")
     # Remove stop words
     data = remove_stop_words(data)
     # Remove punctuation
-    data = remove_punctuation(data)
+    data = remove_punctuation(data) 
     # Convert lyrics to lowercase
     data['Lyric'] = data['Lyric'].str.lower()
     # Vectorize lyrics
@@ -49,6 +50,7 @@ def preprocess(data):
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model 
 def create_splits(X, Y, num_splits=4):
+    print(f"Creating {num_splits} Splits of the Data...")
     splits = []
     strat_kfold = StratifiedKFold(n_splits=num_splits)
     
