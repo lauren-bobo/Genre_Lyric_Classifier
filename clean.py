@@ -4,6 +4,7 @@ import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import StratifiedKFold
 from nltk.corpus import stopwords
 import seaborn as sns
 from sklearn.decomposition import TruncatedSVD
@@ -13,16 +14,22 @@ nltk.download('stopwords')
 
 # File Paths
 Path_To_Test_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_test_lyrics.csv"
-Path_To_Train_data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_train_lyrics.csv"
+Path_To_Train_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_train_lyrics.csv"
 
-# Load Data
-def load_data():
-    train_data = pd.read_csv(Path_To_Train_data)
-    test_data = pd.read_csv(Path_To_Test_Data)
+# Load Data, returns raw train data
+def load_train_data():
+    print(f"Loading Train Data from: {Path_To_Train_Data}")
+    train_data = pd.read_csv(Path_To_Train_Data)
     print(f"Train Data Shape: {train_data.shape}")
-    print(f"Test Data Shape: {test_data.shape}")
+    return train_data
 
-    return train_data, test_data
+# Returns raw test data
+def load_test_data():
+    print(f"Loading Test Data from: {Path_To_Test_Data}")
+    test_data = pd.read_csv(Path_To_Test_Data)
+    print(f"Test Data Shape: {test_data.shape}")
+    return test_data
+
 
 # Preprocessing Pipeline
 def preprocess(data):
@@ -36,7 +43,25 @@ def preprocess(data):
     X_data, vectorizer = vectorize(data['Lyric'])
     # Encode target labels
     Y_data = encode_labels(data['genre'])
+    
     return X_data, Y_data, vectorizer
+
+# After preprocessing, Create 4 non-overlapping splits of the data to train each composing model 
+def create_splits(X, Y, num_splits=4):
+    strat_kfold = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=42)
+
+    # Store splits
+    splits = []
+    
+    # Generate the splits w/ StratifiedKFold
+    for train_index, in strat_kfold.split(X, Y):
+        # Select the data points for each split (X_train, Y_train)
+        X_train, Y_train = X[train_index], Y[train_index]
+        
+        # Append the partition
+        splits.append((X_train, Y_train))
+    
+    return splits
 
 # Preprocessing Helper Functions
 def remove_stop_words(data):
