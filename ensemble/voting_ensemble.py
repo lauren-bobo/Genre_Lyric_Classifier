@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import joblib
 from sklearn.feature_extraction.text import CountVectorizer
-from Data_Processes import load_train_data, preprocess
+from Data.Data_Processes import load_train_data, preprocess
 
 # Load dataset from "clean.py"
 data = load_train_data()
