@@ -6,4 +6,7 @@ X, Y, vectorizer = preprocess(data)
 
 splits = create_splits(X, Y)
 
-print(splits)
+set1 = splits[0]
+set2 = splits[1]
+set3 = splits[2]
+set4 = splits[3]
