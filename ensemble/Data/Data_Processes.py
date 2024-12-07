@@ -10,7 +10,8 @@ import seaborn as sns
 from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 
-nltk.download('stopwords')
+#run the first time
+#nltk.download('stopwords')
 
 # File Paths
 Path_To_Test_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_test_lyrics.csv"
@@ -48,18 +49,13 @@ def preprocess(data):
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model 
 def create_splits(X, Y, num_splits=4):
-    strat_kfold = StratifiedKFold(n_splits=num_splits, shuffle=True, random_state=42)
-
-    # Store splits
     splits = []
+    strat_kfold = StratifiedKFold(n_splits=num_splits)
     
-    # Generate the splits w/ StratifiedKFold
-    for train_index, in strat_kfold.split(X, Y):
-        # Select the data points for each split (X_train, Y_train)
-        X_train, Y_train = X[train_index], Y[train_index]
-        
-        # Append the partition
-        splits.append((X_train, Y_train))
+    for train_index, test_index in strat_kfold.split(X, Y):
+        X_train, X_test = X[train_index], X[test_index]
+        Y_train, Y_test = Y[train_index], Y[test_index]
+        splits.append((X_train, X_test, Y_train, Y_test))
     
     return splits
 
