@@ -45,7 +45,7 @@ def preprocess(data):
     X_data, vectorizer = vectorize(data['Lyric'])
     # Encode target labels
     Y_data = encode_labels(data['genre'])
-    
+    print(f"Preprocessing Complete.")
     return X_data, Y_data, vectorizer
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model 
