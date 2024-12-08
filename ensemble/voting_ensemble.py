@@ -9,7 +9,7 @@ import joblib
 from sklearn.feature_extraction.text import CountVectorizer
 from Data.Data_Processes import load_train_data, preprocess
 
-# Load dataset from "clean.py"
+# Load dataset from "data_processes.py"
 data = load_train_data()
 
 X_train, Y_train, vectorizer = preprocess(data)
@@ -35,3 +35,13 @@ ensemble_model = VotingClassifier(estimators=[
     ('nb1', nb1), ('nb2', nb2), ('nb3', nb3), ('nb4', nb4)
 ], voting='hard')   # 'hard' voting: majority voting
 
+
+# Train the ensemble model
+ensemble_model.fit(X_train, Y_train)
+
+# Make predictions
+Y_pred = ensemble_model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(Y_test, Y_pred)
+print(f'Ensemble Model Accuracy: {accuracy}')
