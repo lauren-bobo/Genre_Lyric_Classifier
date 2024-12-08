@@ -67,7 +67,7 @@ def remove_stop_words(data):
     print(f"Removing Stop Words...")
     stop_words = set(stopwords.words('english'))
     # Add pronouns and contractions commonly found in lyrics
-    additional_stop_words = {"im", "id", "verse", "chorus", "vocals", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya"}
+    additional_stop_words = { "thats", "theres", "ive", "im", "id", "youre", "verse", "chorus", "vocals", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya", "hey"}
     stop_words.update(additional_stop_words)
     data['Lyric'] = data['Lyric'].apply(
         lambda x: ' '.join([word for word in x.split() if word not in stop_words])
@@ -181,9 +181,10 @@ if __name__ == "__main__":
     # Visualize Top TF-IDF Terms
     print("\nVisualizing Top TF-IDF Terms...")
     visualize_tfidf(X_train, vectorizerTrain, top_n=100)
+    visualize_tfidf(X_test, vectorizerTest, top_n=100)
     print("\nVisualizing Top Words per Genre...")
     plot_top_words_per_genre(train_data, vectorizerTrain)
     plot_top_words_per_genre(test_data, vectorizerTest)
-    print("\nData Preprocessing Complete.")
+    print("\nData Preprocessing Complete.") 
 
    
