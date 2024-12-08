@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Genre_Lyric_Classifier",
+			"path": "../.."
+		},
+		{
+			"name": "Music_Lyric_DB",
+			"path": "../../../Downloads/Music_Genre_Classifier/Music_Lyric_DB"
+		}
+	],
+	"settings": {}
+}

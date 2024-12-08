@@ -32,7 +32,7 @@ def load_test_data():
     return test_data
 
 
-# Preprocessing Pipeline
+# Preprocessing Pipeline, returns TF-IDF vectorized data, encoded labels, and the vectorizer
 def preprocess(data):
     print(f"Preprocessing Data... Please wait a moment.")
     # Remove stop words
@@ -40,8 +40,10 @@ def preprocess(data):
     # Remove punctuation
     data = remove_punctuation(data) 
     # Convert lyrics to lowercase
+    #Remove stopwords again 
+    data = remove_stop_words(data)
     data['Lyric'] = data['Lyric'].str.lower()
-    # Vectorize lyrics
+    # Vectorize lyrics with TF-IDF
     X_data, vectorizer = vectorize(data['Lyric'])
     # Encode target labels
     Y_data = encode_labels(data['genre'])
@@ -64,6 +66,9 @@ def create_splits(X, Y, num_splits=4):
 # Preprocessing Helper Functions
 def remove_stop_words(data):
     stop_words = set(stopwords.words('english'))
+    # Add pronouns and contractions commonly found in lyrics
+    additional_stop_words = {"im", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya"}
+    stop_words.update(additional_stop_words)
     data['Lyric'] = data['Lyric'].apply(
         lambda x: ' '.join([word for word in x.split() if word not in stop_words])
     )
@@ -98,6 +103,8 @@ def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
     plt.figure(figsize=(10, 6))
     sns.barplot(data=top_terms, x='Score', y='Term', palette='viridis')
     plt.title(f'Top {top_n} Terms by Average TF-IDF Score')
+    plt.xticks(fontsize=6)
+    plt.yticks(fontsize=6)
     plt.xlabel('Average TF-IDF Score')
     plt.ylabel('Terms')
     plt.show()
@@ -113,7 +120,7 @@ def plot_top_words_per_genre(data, vectorizer):
     genre_word_freq = genre_word_freq.groupby('genre').mean()
 
     # Create a heatmap of top words by genre
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(16, 20))
     sns.heatmap(genre_word_freq, cmap='magma', annot=True, fmt="g", cbar=True)
     plt.title('Top 100 Words by Genre')
     plt.ylabel('Genre')
@@ -170,7 +177,7 @@ if __name__ == "__main__":
 
     # Visualize Top TF-IDF Terms
     print("\nVisualizing Top TF-IDF Terms...")
-    visualize_tfidf(X_train, vectorizerTrain, top_n=300)
+    visualize_tfidf(X_train, vectorizerTrain, top_n=100)
     print("\nVisualizing Top Words per Genre...")
     plot_top_words_per_genre(train_data, vectorizerTrain)
     plot_top_words_per_genre(test_data, vectorizerTest)
