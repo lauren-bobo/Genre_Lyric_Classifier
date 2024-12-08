@@ -34,15 +34,14 @@ def load_test_data():
 
 # Preprocessing Pipeline, returns TF-IDF vectorized data, encoded labels, and the vectorizer
 def preprocess(data):
-    print(f"Preprocessing Data... Please wait a moment.")
-    # Remove stop words
-    data = remove_stop_words(data)
+    print(f"Preprocessing Data... This will take a while.")
     # Remove punctuation
     data = remove_punctuation(data) 
     # Convert lyrics to lowercase
-    #Remove stopwords again 
-    data = remove_stop_words(data)
+    print(f"Converting to lowercase...")
     data['Lyric'] = data['Lyric'].str.lower()
+    # Remove stop words
+    data = remove_stop_words(data)
     # Vectorize lyrics with TF-IDF
     X_data, vectorizer = vectorize(data['Lyric'])
     # Encode target labels
@@ -65,9 +64,10 @@ def create_splits(X, Y, num_splits=4):
 
 # Preprocessing Helper Functions
 def remove_stop_words(data):
+    print(f"Removing Stop Words...")
     stop_words = set(stopwords.words('english'))
     # Add pronouns and contractions commonly found in lyrics
-    additional_stop_words = {"im", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya"}
+    additional_stop_words = {"im", "id", "verse", "chorus", "vocals", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya"}
     stop_words.update(additional_stop_words)
     data['Lyric'] = data['Lyric'].apply(
         lambda x: ' '.join([word for word in x.split() if word not in stop_words])
@@ -75,16 +75,19 @@ def remove_stop_words(data):
     return data
 
 def remove_punctuation(data):
+    print(f"Removing Punctuation...")
     data['Lyric'] = data['Lyric'].str.replace(r'[^\w\s]', '', regex=True)
     return data
 
 def vectorize(lyrics):
+    print(f"Vectorizing Lyrics with TF-IDF...")
     vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)  # Only keep the 5000 most common words
     X_tfidf = vectorizer.fit_transform(lyrics)
     print(f"TF-IDF Shape: {X_tfidf.shape}")
     return X_tfidf, vectorizer
 
 def encode_labels(labels):
+    print(f"Encoding Labels...")
     encoder = LabelEncoder()
     y_encoded = encoder.fit_transform(labels)
     print(f"Encoded Labels: {list(encoder.classes_)}")
