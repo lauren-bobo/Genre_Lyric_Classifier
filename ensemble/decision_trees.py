@@ -46,7 +46,7 @@ val_accuracy = accuracy_score(Y_valid, val_predictions)
 print(f"Validation Accuracy: {val_accuracy:.4f}")
 print("Classification Report on Validation Set:\n", classification_report(Y_valid, val_predictions))
 
-# predictions for split 4 (ensemble)
+# predictions for split4 (ensemble)
 print("Saving Predictions for Split 4...")
 X_split4 = split_4[0]  
 Y_split4 = split_4[2]  
