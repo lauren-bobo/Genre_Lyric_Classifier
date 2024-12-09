@@ -11,7 +11,7 @@ from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 
 
-#run the first time
+# run the first time
 nltk.download('stopwords')
 
 
@@ -36,9 +36,7 @@ def load_test_data():
    return test_data
 
 
-
-
-# Preprocessing Pipeline, returns TF-IDF vectorized data, encoded labels, and the vectorizer
+# Preprocessing Pipeline
 def preprocess(data):
    print(f"Preprocessing Data... This will take a while.")
    # Remove punctuation
@@ -88,7 +86,6 @@ def remove_punctuation(data):
    data['Lyric'] = data['Lyric'].str.replace(r'[^\w\s]', '', regex=True)
    return data
 
-
 def vectorize(lyrics):
    print(f"Vectorizing Lyrics with TF-IDF...")
    vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)  # Only keep the 5000 most common words
@@ -96,14 +93,12 @@ def vectorize(lyrics):
    print(f"TF-IDF Shape: {X_tfidf.shape}")
    return X_tfidf, vectorizer
 
-
 def encode_labels(labels):
    print(f"Encoding Labels...")
    encoder = LabelEncoder()
    y_encoded = encoder.fit_transform(labels)
    print(f"Encoded Labels: {list(encoder.classes_)}")
    return y_encoded
-
 
 def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
    # Convert the TF-IDF matrix to dense and calculate mean scores
@@ -168,12 +163,10 @@ if __name__ == "__main__":
    plt.show()
 
 
-   #check for duplicates
+   # Check for duplicates
    print(f"Train Data Duplicates: {train_data.duplicated().sum()}")
    print(f"Test Data Duplicates: {test_data.duplicated().sum()}")
 
-
-  
    # Preprocess Training Data
    print("\nPreprocessing Training Data...")
    X_train, Y_train, vectorizerTrain = preprocess(train_data)
@@ -185,6 +178,7 @@ if __name__ == "__main__":
    X_test, Y_test, vectorizerTest = preprocess(test_data)
    print(f"X_test Shape: {X_test.shape}")
    print(f"Y_test Shape: {Y_test.shape}")
+  
    # Plotting the distribution of genres in the training data
    plt.figure(figsize=(10, 6))
    sns.countplot(y=train_data['genre'], order=train_data['genre'].value_counts().index)
@@ -192,7 +186,6 @@ if __name__ == "__main__":
    plt.xlabel('Count')
    plt.ylabel('Genre')
    plt.show()
-
 
    # Plotting the distribution of genres in the test data
    plt.figure(figsize=(10, 6))
@@ -202,7 +195,6 @@ if __name__ == "__main__":
    plt.ylabel('Genre')
    plt.show()
 
-
    # Visualize Top TF-IDF Terms
    print("\nVisualizing Top TF-IDF Terms...")
    visualize_tfidf(X_train, vectorizerTrain, top_n=100)
@@ -210,6 +202,6 @@ if __name__ == "__main__":
    print("\nVisualizing Top Words per Genre...")
    plot_top_words_per_genre(train_data, vectorizerTrain)
    plot_top_words_per_genre(test_data, vectorizerTest)
-   print("\nData Preprocessing Complete.")
+
 
 
