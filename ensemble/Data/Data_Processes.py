@@ -7,7 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from nltk.corpus import stopwords
 import seaborn as sns
-from sklearn.decomposition import TruncatedSVD
 import matplotlib.pyplot as plt
 
 
@@ -38,14 +37,14 @@ def load_test_data():
 
 # Preprocessing Pipeline
 def preprocess(data):
-   print(f"Preprocessing Data... This will take a while.")
-   # Remove punctuation
-   data = remove_punctuation(data)
+   print(f"Preprocessing Data...")
    # Convert lyrics to lowercase
    print(f"Converting to lowercase...")
    data['Lyric'] = data['Lyric'].str.lower()
    # Remove stop words
    data = remove_stop_words(data)
+   # Remove punctuation
+   data = remove_punctuation(data)
    # Vectorize lyrics with TF-IDF
    X_data, vectorizer = vectorize(data['Lyric'])
    # Encode target labels
@@ -75,7 +74,8 @@ def remove_stop_words(data):
    # Add pronouns and contractions commonly found in lyrics
    additional_stop_words = { "thats", "theres", "ive", "im", "id", "youre", "verse", "chorus", "vocals", "youve", "shes", "hes", "theyve", "weve", "ill", "youll", "wont", "cant", "isnt", "arent", "wasnt", "werent", "dont", "doesnt", "didnt", "havent", "hasnt", "hadnt", "aint", "gonna", "wanna", "ya", "hey"}
    stop_words.update(additional_stop_words)
-   data['Lyric'] = data['Lyric'].apply(
+   # Remove stop words from lyrics using optimized map
+   data['Lyric'] = data['Lyric'].map(
        lambda x: ' '.join([word for word in x.split() if word not in stop_words])
    )
    return data
@@ -83,8 +83,11 @@ def remove_stop_words(data):
 
 def remove_punctuation(data):
    print(f"Removing Punctuation...")
-   data['Lyric'] = data['Lyric'].str.replace(r'[^\w\s]', '', regex=True)
+    # Remove all punctuation and numeric characters
+   data['Lyric'] = data['Lyric'].str.replace(r'[^\w\s]', '', regex=True)  # Remove punctuation
+   data['Lyric'] = data['Lyric'].str.replace(r'\d+', '', regex=True)      # Remove numbers
    return data
+
 
 def vectorize(lyrics):
    print(f"Vectorizing Lyrics with TF-IDF...")
@@ -93,12 +96,14 @@ def vectorize(lyrics):
    print(f"TF-IDF Shape: {X_tfidf.shape}")
    return X_tfidf, vectorizer
 
+
 def encode_labels(labels):
    print(f"Encoding Labels...")
    encoder = LabelEncoder()
    y_encoded = encoder.fit_transform(labels)
    print(f"Encoded Labels: {list(encoder.classes_)}")
    return y_encoded
+
 
 def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
    # Convert the TF-IDF matrix to dense and calculate mean scores
@@ -134,10 +139,9 @@ def plot_top_words_per_genre(data, vectorizer):
    # Limit to top 100 words per genre
    top_words = genre_word_freq.iloc[:, :100]
 
-
-   # Create a heatmap of top words by genre
+   # Create a heatmap of top words by genre with proper word labels
    plt.figure(figsize=(16, 20))
-   sns.heatmap(top_words, cmap='magma', cbar=True)
+   sns.heatmap(top_words, cmap='magma', cbar=True, xticklabels=top_words.columns)
    plt.title('Top 100 Words by Genre')
    plt.ylabel('Genre')
    plt.xlabel('Word')
@@ -169,13 +173,14 @@ if __name__ == "__main__":
 
    # Preprocess Training Data
    print("\nPreprocessing Training Data...")
-   X_train, Y_train, vectorizerTrain = preprocess(train_data)
+   X_train, Y_train, vectorizer = preprocess(train_data)
    print(f"X_train Shape: {X_train.shape}")
    print(f"Y_train Shape: {Y_train.shape}")
   
    # Preprocess Test Data
    print("\nPreprocessing Test Data...")
-   X_test, Y_test, vectorizerTest = preprocess(test_data)
+   X_test = vectorizer.transform(test_data['Lyric'])
+   Y_test = encode_labels(test_data['genre'])
    print(f"X_test Shape: {X_test.shape}")
    print(f"Y_test Shape: {Y_test.shape}")
   
@@ -197,11 +202,6 @@ if __name__ == "__main__":
 
    # Visualize Top TF-IDF Terms
    print("\nVisualizing Top TF-IDF Terms...")
-   visualize_tfidf(X_train, vectorizerTrain, top_n=100)
-   visualize_tfidf(X_test, vectorizerTest, top_n=100)
+   visualize_tfidf(X_train, vectorizer, top_n=100)
    print("\nVisualizing Top Words per Genre...")
-   plot_top_words_per_genre(train_data, vectorizerTrain)
-   plot_top_words_per_genre(test_data, vectorizerTest)
-
-
-
+   plot_top_words_per_genre(train_data, vectorizer)
