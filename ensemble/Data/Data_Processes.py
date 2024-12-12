@@ -15,9 +15,8 @@ nltk.download('stopwords')
 
 
 # File Paths
-Path_To_Test_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_test_lyrics.csv"
-Path_To_Train_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_train_lyrics.csv"
-
+Path_To_Test_Data = "C:/Users/ldbob/Downloads/Lyrics_DB/cleaned_test_lyrics.csv"
+Path_To_Train_Data =  "C:/Users/ldbob/Downloads/Lyrics_DB/cleaned_train_lyrics.csv"
 
 # Load Data, returns raw train data
 def load_train_data():

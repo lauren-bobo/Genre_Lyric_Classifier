@@ -19,7 +19,7 @@ split_1, split_2, split_3 = splits[:3]  # Exclude split 4
 def train_and_evaluate_model_cv(X_train, Y_train):
     print("Training and Evaluating Logistic Regression Model with 10-Fold Cross-Validation...")
     start_time = time.time()
-    lr_model = LogisticRegression(max_iter=1000)
+    lr_model = LogisticRegression(max_iter=500)
     kf = KFold(n_splits=10, shuffle=True, random_state=42)
     cv_scores = cross_val_score(lr_model, X_train, Y_train, cv=kf, scoring='accuracy')
     print(f"Cross-validation completed in {time.time() - start_time:.2f} seconds")
