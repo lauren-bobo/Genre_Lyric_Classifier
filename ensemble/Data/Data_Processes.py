@@ -15,8 +15,8 @@ nltk.download('stopwords')
 
 
 # File Paths
-Path_To_Test_Data = "/Users/gentrochez/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_test_lyrics.csv"
-Path_To_Train_Data = "/Users/gentrochez/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_train_lyrics.csv"
+Path_To_Test_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_test_lyrics.csv"
+Path_To_Train_Data = "C:/Users/ldbob/Downloads/Music_Genre_Classifier/Music_Lyric_DB/DB/cleaned_train_lyrics.csv"
 
 
 # Load Data, returns raw train data
@@ -24,6 +24,7 @@ def load_train_data():
    print(f"Loading Train Data from: {Path_To_Train_Data}")
    train_data = pd.read_csv(Path_To_Train_Data)
    print(f"Train Data Shape: {train_data.shape}")
+   print(f"Train Data Columns: {train_data.columns}")
    return train_data
 
 
@@ -55,16 +56,16 @@ def preprocess(data):
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model
 def create_splits(X, Y, num_splits=4):
-   print(f"Creating {num_splits} Splits of the Data...")
-   splits = []
-   strat_kfold = StratifiedKFold(n_splits=num_splits)
-  
-   for train_index, test_index in strat_kfold.split(X, Y):
-       X_train, X_test = X[train_index], X[test_index]
-       Y_train, Y_test = Y[train_index], Y[test_index]
-       splits.append((X_train, X_test, Y_train, Y_test))
-  
-   return splits
+    print(f"Creating {num_splits} Splits of the Data...")
+    splits = []
+    strat_kfold = StratifiedKFold(n_splits=num_splits)
+    
+    for train_index, _ in strat_kfold.split(X, Y):
+        X_train = X[train_index]
+        Y_train = Y[train_index]
+        splits.append((X_train, Y_train))
+    
+    return splits
 
 
 # Preprocessing Helper Functions

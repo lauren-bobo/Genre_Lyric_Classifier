@@ -1,68 +1,51 @@
-import pickle
-from scipy.sparse import vstack
-import numpy as np
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
-from Data.Data_Processes import load_train_data, preprocess, create_splits
 import time
+import pandas as pd
+import numpy as np
+import pickle
+from Data.Data_Processes import load_train_data, preprocess, create_splits
 
-# load and preprocess data
-print("Loading and Preprocessing Data...")
-data = load_train_data()  
-X, Y, vectorizer = preprocess(data)  
+data = load_train_data()
+X, Y, vectorizer = preprocess(data)
 
 # create data splits
 print("Creating Data Splits...")
-splits = create_splits(X, Y)  
-split_1, split_2, split_3, split_4 = splits
+splits = create_splits(X, Y)
+split_1, split_2, split_3 = splits[:3]  # Exclude split 4
 
-# combine data splits 
-print("Combining Data Splits...")
-X_train = vstack([split_1[0], split_2[0], split_3[0]])  
-Y_train = np.concatenate([split_1[2], split_2[2], split_3[2]])  
+# function to train and evaluate model using cross-validation
+def train_and_evaluate_model_cv(X_train, Y_train):
+    print("Training and Evaluating Random Forest Model with 10-Fold Cross-Validation...")
+    start_time = time.time()
+    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    kf = KFold(n_splits=10, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(rf_model, X_train, Y_train, cv=kf, scoring='accuracy')
+    print(f"Cross-validation completed in {time.time() - start_time:.2f} seconds")
+    print(f"Cross-validation Accuracy Scores: {cv_scores}")
+    print(f"Mean Accuracy: {cv_scores.mean():.4f}")
+    print(f"Standard Deviation: {cv_scores.std():.4f}")
+    rf_model.fit(X_train, Y_train)
+    return rf_model
 
-# create a validation set
-print("Creating Validation Set...")
-from sklearn.model_selection import train_test_split
-X_train_part, X_valid, Y_train_part, Y_valid = train_test_split(
-    X_train, Y_train, test_size=0.2, random_state=42
-)
+# train, evaluate and save the first model using split_1
+print("Training and Evaluating Model 1 using split_1...")
+X_train_1, Y_train_1 = split_1
+rf_model_1 = train_and_evaluate_model_cv(X_train_1, Y_train_1)
+with open('model_1.pkl', 'wb') as f:
+    pickle.dump(rf_model_1, f)
 
-# train decision tree model
-print("Training Decision Tree Model...")
-start_time = time.time()
-dt_model = DecisionTreeClassifier(max_depth=10, random_state=42, class_weight="balanced")  
-dt_model.fit(X_train_part, Y_train_part)  
-print(f"Model trained in {time.time() - start_time:.2f} seconds")
+# train, evaluate and save the second model using split_2
+print("Training and Evaluating Model 2 using split_2...")
+X_train_2, Y_train_2 = split_2
+rf_model_2 = train_and_evaluate_model_cv(X_train_2, Y_train_2)
+with open('model_2.pkl', 'wb') as f:
+    pickle.dump(rf_model_2, f)
 
-# evaluate model
-print("Evaluating Decision Tree Model on Validation Set...")
-start_time = time.time()
-val_predictions = dt_model.predict(X_valid)  
-print(f"Evaluation completed in {time.time() - start_time:.2f} seconds")
-
-# show metrics
-val_accuracy = accuracy_score(Y_valid, val_predictions)
-print(f"Validation Accuracy: {val_accuracy:.4f}")
-print("Classification Report on Validation Set:\n", classification_report(Y_valid, val_predictions))
-
-# predictions for split4 (ensemble)
-print("Saving Predictions for Split 4...")
-X_split4 = split_4[0]  
-Y_split4 = split_4[2]  
-split4_predictions = dt_model.predict(X_split4)
-
-with open('tree_predictions_split4.pkl', 'wb') as f:
-    pickle.dump(split4_predictions, f)
-
-# save the model with pickle
-print("Saving Decision Tree Model...")
-with open('decision_tree.pkl', 'wb') as f:
-    pickle.dump(dt_model, f)
-
-# save the TF-IDF vectorizer
-print("Saving TF-IDF Vectorizer...")
-with open('tfidf_vectorizer.pkl', 'wb') as f:
-    pickle.dump(vectorizer, f)
-
-print("Decision Tree Model, TF-IDF Vectorizer, and Split 4 Predictions Saved Successfully!")
+# train, evaluate and save the third model using split_3
+print("Training and Evaluating Model 3 using split_3...")
+X_train_3, Y_train_3 = split_3
+rf_model_3 = train_and_evaluate_model_cv(X_train_3, Y_train_3)
+with open('model_3.pkl', 'wb') as f:
+    pickle.dump(rf_model_3, f)
