@@ -2,13 +2,12 @@ import pandas as pd
 import numpy as np
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedKFold
 from nltk.corpus import stopwords
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+from sklearn.decomposition import PCA
 
 # run the first time
 nltk.download('stopwords')
@@ -36,21 +35,43 @@ def load_test_data():
 
 
 # Preprocessing Pipeline
-def preprocess(data):
-   print(f"Preprocessing Data...")
-   # Convert lyrics to lowercase
-   print(f"Converting to lowercase...")
-   data['Lyric'] = data['Lyric'].str.lower()
-   # Remove stop words
-   data = remove_stop_words(data)
-   # Remove punctuation
-   data = remove_punctuation(data)
-   # Vectorize lyrics with TF-IDF
-   X_data, vectorizer = vectorize(data['Lyric'])
-   # Encode target labels
-   Y_data, encoder = encode_labels(data['genre'])
-   print(f"Preprocessing Complete.")
-   return X_data, Y_data, vectorizer, encoder
+def preprocess(data, variance_threshold=0.95):
+      print(f"Preprocessing Data with PCA (variance threshold={variance_threshold})...")
+    
+      # Convert lyrics to lowercase
+      print(f"Converting to lowercase...")
+      data['Lyric'] = data['Lyric'].str.lower()
+      
+      # Remove stop words
+      data = remove_stop_words(data)
+      
+      # Remove punctuation
+      data = remove_punctuation(data)
+      
+      # Vectorize lyrics with TF-IDF
+      print(f"Vectorizing Lyrics with TF-IDF...")
+      X_data, vectorizer = vectorize(data['Lyric'])
+      
+      # Apply PCA for dimensionality reduction
+      print(f"Applying PCA for dimensionality reduction...")
+      pca = PCA(n_components=X_data.shape[1])  # Start with the maximum number of components
+      X_reduced = pca.fit_transform(X_data.toarray())  # Convert sparse matrix to dense for PCA
+      
+      # Calculate the number of components to retain
+      cumulative_variance = np.cumsum(pca.explained_variance_ratio_)
+      num_components = np.argmax(cumulative_variance >= variance_threshold) + 1
+      print(f"Number of components to retain: {num_components} (explaining {variance_threshold * 100:.1f}% of variance)")
+      
+      # Reapply PCA with optimal components
+      pca = PCA(n_components=num_components)
+      X_reduced = pca.fit_transform(X_data.toarray())
+      
+      # Encode target labels
+      print(f"Encoding Labels...")
+      Y_data, encoder = encode_labels(data['genre'])
+      
+      print(f"Preprocessing Complete. Reduced to {num_components} features.")
+      return X_reduced, Y_data, vectorizer, encoder
 
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model
