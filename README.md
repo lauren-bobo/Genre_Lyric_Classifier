@@ -15,4 +15,4 @@ decision_trees: trains 3 decision tree models with with varied parameters. Saves
 
 stacked_ensemble: creates an ensemble model with a random forrest meta learner. 
 
-test: tests the data on testing data and charts and reports accuracy. 
+test: tests the ensemble w/ testing data sets and reports accuracy. 

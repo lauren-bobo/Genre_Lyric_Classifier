@@ -2,6 +2,7 @@ from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.metrics import accuracy_score, classification_report
 from Data.Data_Processes import load_train_data, preprocess, create_splits
 import pickle
+import time
 
 # Load and preprocess data
 print("Loading and Preprocessing Data...")
@@ -44,13 +45,17 @@ base_estimators = [
 print("Creating Stacking Model with Random Forest...")
 stacking_model = StackingClassifier(
     estimators=base_estimators,
-    final_estimator=RandomForestClassifier(n_estimators=100, random_state=42),
+    final_estimator=RandomForestClassifier(n_estimators=10, random_state=42, n_jobs=-1),
     cv=5  # Optional: Cross-validation for meta-classifier
 )
 
-# Train the stacking model
+# Train the stacking model and measure training time
 print("Training Stacking Model...")
+start_time = time.time()
 stacking_model.fit(X_train, Y_train)
+end_time = time.time()
+training_time = end_time - start_time
+print(f"Training Time: {training_time:.2f} seconds")
 
 # Evaluate the stacking model
 print("Evaluating Stacking Model...")
