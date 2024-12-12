@@ -8,7 +8,7 @@ from sklearn.tree import DecisionTreeClassifier
 # load and preprocess data
 print("Loading and Preprocessing Data...")
 data = load_train_data()
-X, Y, vectorizer = preprocess(data)
+X, Y, vectorizer, encoder= preprocess(data)
 
 # create data splits
 print("Creating Data Splits...")
@@ -16,10 +16,28 @@ splits = create_splits(X, Y, num_splits=4)
 split_4 = splits[3]  
 X_train, Y_train = split_4
 
+# load pre-trained models
+print("Loading Pre-trained Models...")
+model_names = ['lr_model_1', 'lr_model_2', 'lr_model_3', 'dt_model_1', 'dt_model_2', 'dt_model_3', 'nb_model_1', 'nb_model_2', 'nb_model_3']
+models = {}
+for name in model_names:
+    with open(f'ensemble/pickel_jar/{name}.pkl', 'rb') as file:
+        models[name] = pickle.load(file)
+
+lr_model_1 = models['lr_model_1']
+lr_model_2 = models['lr_model_2']
+lr_model_3 = models['lr_model_3']
+dt_model_1 = models['dt_model_1']
+dt_model_2 = models['dt_model_2']
+dt_model_3 = models['dt_model_3']
+nb_model_1 = models['nb_model_1']
+nb_model_2 = models['nb_model_2']
+nb_model_3 = models['nb_model_3']
+
 # create the Bagging model
 print("Creating Bagging Model...")
-base_estimator = DecisionTreeClassifier(max_depth=20, min_samples_split=10, random_state=33)
-bagging_model = BaggingClassifier(base_estimator=base_estimator, n_estimators=200, bootstrap=True, random_state=33)
+base_estimators = [lr_model_1, lr_model_2, lr_model_3, dt_model_1, dt_model_2, dt_model_3, nb_model_1, nb_model_2, nb_model_3]
+bagging_model = BaggingClassifier(base_estimator=base_estimators, n_estimators=200, bootstrap=True, random_state=33)
 
 # train the model
 print("Training Bagging Model...")
