@@ -98,12 +98,11 @@ def vectorize(lyrics):
 
 
 def encode_labels(labels):
-   print(f"Encoding Labels...")
-   encoder = LabelEncoder()
-   y_encoded = encoder.fit_transform(labels)
-   print(f"Encoded Labels: {list(encoder.classes_)}")
-   return y_encoded
-
+    print(f"Encoding Labels...")
+    encoder = LabelEncoder()
+    y_encoded = encoder.fit_transform(labels)
+    print(f"Encoded Labels: {list(encoder.classes_)}")
+    return y_encoded, encoder
 
 def visualize_tfidf(tfidf_matrix, vectorizer, top_n=100):
    # Convert the TF-IDF matrix to dense and calculate mean scores

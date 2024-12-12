@@ -1,11 +1,12 @@
-import numpy as np
 import pickle
 from Data.Data_Processes import load_train_data, preprocess, create_splits
-import random
 import pandas as pd
+import time
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
 
 data = load_train_data()
-X, Y, vectorizer = preprocess(data)
+X, Y, vectorizer, encoder= preprocess(data) 
 
 # create data splits
 print("Creating Data Splits...")
@@ -58,13 +59,12 @@ def train_and_evaluate_model(X_train, Y_train, X_test, Y_test, params):
 
 # test data
 X_test, Y_test = split_4
-
 # train, evaluate and save the first model using split_1 with parameters set 1
 print("Training and Evaluating Model 1 using split_1 with parameters set 1...")
 X_train_1, Y_train_1 = split_1
 params_1 = param_combinations[0]
 lr_model_1 = train_and_evaluate_model(X_train_1, Y_train_1, X_test, Y_test, params_1)
-with open('lr_model_1.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/lr_model_1.pkl', 'wb') as f:
     pickle.dump(lr_model_1, f)
 
 # train, evaluate and save the second model using split_2 with parameters set 2
@@ -72,7 +72,7 @@ print("Training and Evaluating Model 2 using split_2 with parameters set 2...")
 X_train_2, Y_train_2 = split_2
 params_2 = param_combinations[1]
 lr_model_2 = train_and_evaluate_model(X_train_2, Y_train_2, X_test, Y_test, params_2)
-with open('lr_model_2.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/lr_model_2.pkl', 'wb') as f:
     pickle.dump(lr_model_2, f)
 
 # train, evaluate and save the third model using split_3 with parameters set 3
@@ -80,5 +80,5 @@ print("Training and Evaluating Model 3 using split_3 with parameters set 3...")
 X_train_3, Y_train_3 = split_3
 params_3 = param_combinations[2]
 lr_model_3 = train_and_evaluate_model(X_train_3, Y_train_3, X_test, Y_test, params_3)
-with open('lr_model_3.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/lr_model_3.pkl', 'wb') as f:
     pickle.dump(lr_model_3, f)

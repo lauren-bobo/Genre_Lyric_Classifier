@@ -55,7 +55,7 @@ import pickle
 from Data.Data_Processes import load_train_data, preprocess, create_splits
 
 data = load_train_data()
-X, Y, vectorizer = preprocess(data)
+X, Y, vectorizer, encoder = preprocess(data)
 
 # create data splits
 print("Creating Data Splits...")
@@ -87,20 +87,20 @@ X_test, Y_test = split_4
 print("Training and Evaluating Model 1 using split_1 with parameters set 1...")
 X_train_1, Y_train_1 = split_1
 nb_model_1 = train_and_evaluate_model(X_train_1, Y_train_1, X_test, Y_test, alpha=0.001, fit_prior=True)
-with open('pickel_jar/nb_model_1.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/nb_model_1.pkl', 'wb') as f:
     pickle.dump(nb_model_1, f)
 
 # train, evaluate and save the second model using split_2 with parameters set 2
 print("Training and Evaluating Model 2 using split_2 with parameters set 2...")
 X_train_2, Y_train_2 = split_2
 nb_model_2 = train_and_evaluate_model(X_train_2, Y_train_2, X_test, Y_test, alpha=0.01, fit_prior=False)
-with open('pickel_jar/nb_model_2.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/nb_model_2.pkl', 'wb') as f:
     pickle.dump(nb_model_2, f)
 
 # train, evaluate and save the third model using split_3 with parameters set 3
 print("Training and Evaluating Model 3 using split_3 with parameters set 3...")
 X_train_3, Y_train_3 = split_3
 nb_model_3 = train_and_evaluate_model(X_train_3, Y_train_3, X_test, Y_test, alpha=0.1, fit_prior=True)
-with open('pickel_jar/nb_model_3.pkl', 'wb') as f:
+with open('ensemble/pickel_jar/nb_model_3.pkl', 'wb') as f:
     pickle.dump(nb_model_3, f)
 
