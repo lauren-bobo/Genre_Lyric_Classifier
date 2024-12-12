@@ -48,9 +48,9 @@ def preprocess(data):
    # Vectorize lyrics with TF-IDF
    X_data, vectorizer = vectorize(data['Lyric'])
    # Encode target labels
-   Y_data = encode_labels(data['genre'])
+   Y_data, encoder = encode_labels(data['genre'])
    print(f"Preprocessing Complete.")
-   return X_data, Y_data, vectorizer
+   return X_data, Y_data, vectorizer, encoder
 
 
 # After preprocessing, Create 4 non-overlapping splits of the data to train each composing model
