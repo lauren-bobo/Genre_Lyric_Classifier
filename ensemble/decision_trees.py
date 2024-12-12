@@ -1,5 +1,5 @@
 from sklearn.model_selection import cross_val_score, KFold
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import time
 import pandas as pd
@@ -17,35 +17,35 @@ split_1, split_2, split_3 = splits[:3]  # Exclude split 4
 
 # function to train and evaluate model using cross-validation
 def train_and_evaluate_model_cv(X_train, Y_train):
-    print("Training and Evaluating Random Forest Model with 10-Fold Cross-Validation...")
+    print("Training and Evaluating Decision Tree Model with 10-Fold Cross-Validation...")
     start_time = time.time()
-    rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    dt_model = DecisionTreeClassifier(random_state=42)
     kf = KFold(n_splits=10, shuffle=True, random_state=42)
-    cv_scores = cross_val_score(rf_model, X_train, Y_train, cv=kf, scoring='accuracy')
+    cv_scores = cross_val_score(dt_model, X_train, Y_train, cv=kf, scoring='accuracy')
     print(f"Cross-validation completed in {time.time() - start_time:.2f} seconds")
     print(f"Cross-validation Accuracy Scores: {cv_scores}")
     print(f"Mean Accuracy: {cv_scores.mean():.4f}")
     print(f"Standard Deviation: {cv_scores.std():.4f}")
-    rf_model.fit(X_train, Y_train)
-    return rf_model
+    dt_model.fit(X_train, Y_train)
+    return dt_model
 
 # train, evaluate and save the first model using split_1
 print("Training and Evaluating Model 1 using split_1...")
 X_train_1, Y_train_1 = split_1
-rf_model_1 = train_and_evaluate_model_cv(X_train_1, Y_train_1)
+dt_model_1 = train_and_evaluate_model_cv(X_train_1, Y_train_1)
 with open('model_1.pkl', 'wb') as f:
-    pickle.dump(rf_model_1, f)
+    pickle.dump(dt_model_1, f)
 
 # train, evaluate and save the second model using split_2
 print("Training and Evaluating Model 2 using split_2...")
 X_train_2, Y_train_2 = split_2
-rf_model_2 = train_and_evaluate_model_cv(X_train_2, Y_train_2)
+dt_model_2 = train_and_evaluate_model_cv(X_train_2, Y_train_2)
 with open('model_2.pkl', 'wb') as f:
-    pickle.dump(rf_model_2, f)
+    pickle.dump(dt_model_2, f)
 
 # train, evaluate and save the third model using split_3
 print("Training and Evaluating Model 3 using split_3...")
 X_train_3, Y_train_3 = split_3
-rf_model_3 = train_and_evaluate_model_cv(X_train_3, Y_train_3)
+dt_model_3 = train_and_evaluate_model_cv(X_train_3, Y_train_3)
 with open('model_3.pkl', 'wb') as f:
-    pickle.dump(rf_model_3, f)
+    pickle.dump(dt_model_3, f)
